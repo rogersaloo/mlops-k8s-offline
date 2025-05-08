@@ -858,4 +858,182 @@ kubectl taint nodes aloo node-role.kubernetes.io/control-plane-
 
 ![image.png](assets/2.13-untaint.png)
 
-## Troubleshooting 
+# Troubleshooting 
+## Troubleshoot1: Failure on initialize kubeadm
+
+The error should not occur if the containerd default config is initilized and the changes made as described in the installation for containerd. However, If the following error occurs
+
+![image](assets/troublesht.png)
+```bash
+I0508 16:22:40.253194 1253526 version.go:256] remote version is much newer: v1.33.0; falling back to: stable-1.30
+[init] Using Kubernetes version: v1.30.12
+[preflight] Running pre-flight checks
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR CRI]: container runtime is not running: output: time="2025-05-08T16:22:40+09:00" level=fatal msg="validate service connection: validate CRI v1 runtime API for endpoint \"unix:///var/run/containerd/containerd.sock\": rpc error: code = Unimplemented desc = unknown service runtime.v1.RuntimeService"
+, error: exit status 1
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+```
+
+**Solution 1**
+
+1. Navigate to the config toml for containerd
+    
+    ```
+     sudo nano /etc/containerd/config.toml
+    ```
+    
+    The default containerd will mostly be of the following form 
+    
+    ```bash
+    #   Licensed under the Apache License, Version 2.0 (the "License");
+    #   you may not use this file except in compliance with the License.
+    #   You may obtain a copy of the License at
+    
+    #       http://www.apache.org/licenses/LICENSE-2.0
+    
+    #   Unless required by applicable law or agreed to in writing, software
+    #   distributed under the License is distributed on an "AS IS" BASIS,
+    #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    #   See the License for the specific language governing permissions and
+    #   limitations under the License.
+    
+    enabled_plugins = ["cri"]
+    
+    #root = "/var/lib/containerd"
+    #state = "/run/containerd"
+    #subreaper = true
+    #oom_score = 0
+    
+    #[grpc]
+    #  address = "/run/containerd/containerd.sock"
+    #  uid = 0
+    #  gid = 0
+    
+    #[debug]
+    #  address = "/run/containerd/debug.sock"
+    #  uid = 0
+    #  gid = 0
+    #  level = "info"
+    ```
+    
+2. Change the `disabled_plugins` to `enabled_plugins`
+    
+    ```
+     - disabled_plugins = ["cri"]
+     + enabled_plugins = ["cri"]
+    
+    ```
+    
+3. Restart the `containerd` service
+    
+    ```
+     sudo systemctl restart containerd
+    
+    ```
+    
+
+**Solution 2**
+
+1. Navigate to the config toml for containerd
+    
+    ```
+     sudo nano /etc/containerd/config.toml
+    
+    ```
+    
+2. Delete everything and replace it with the following configurationsudo
+    
+    ```
+     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+         SystemdCgroup = true
+    
+    ```
+    
+3. Restart the `containerd` service
+    
+    ```
+     sudo systemctl restart containerd
+    
+    ```
+    
+## Troubleshoot2: Solve error unhealthy timeout
+The error occurs due to a timeout in initializing the kubeadm. This occcurs when the control plane name is not provided in the correct name as the mapping on the `/etc/hosts` file. 
+1. The current error is of this sort
+    
+    ![image.png](assets/tb2.png)
+    
+    The error indicates that both the kubeapi server are not connecting properly.
+    
+2. Run again the `kubedm init` on one terminal and leave it running. Open a new terminal and run the following.
+3. On the new terminal continue Check the kubelet service if it is running
+    
+    ```jsx
+    sudo systemctl status kubelet
+    ```
+    
+    The output should be 
+    
+    ![image.png](assets/tb2.2.png)
+    
+    If the last part of the error is the same proceed to next step.
+    
+4. Check the hosts file
+    
+    ```jsx
+    sudo cat /etc/hosts 
+    ```
+    
+    I do not know the output on the server but add the following if it is not available. 
+    Below the file server add. `nano /etc/hosts` 
+    
+    ```jsx
+    10.100.9.6 controlplane
+    ```
+    
+    The added IP should be the same as that of the fileserver. Save and exit. 
+    
+    Ping the contolplane you just added the should be packet response.
+    Or send a curl command and the following below responses wil occur 
+    
+    ```jsx
+    curl -k https://controlplane:6443
+    ping controlplane
+    ```
+    
+5. After this restart the kubelet 
+    
+    ```jsx
+    sudo systemctl restart kubelet
+    ```
+    
+6. Check the kubelet status
+    
+    ```jsx
+    sudo systemctl status kubelet
+    ```
+    
+    The following output is expected 
+    
+    ![image.png](assets/tb2.3.png)
+    
+7. Reset the kubeadm 
+    
+    ```jsx
+    sudo kubeadm reset
+    ```
+    
+    ![image.png](assets/tb2.4.png)
+    
+    Restart again kubelet
+    
+    ```jsx
+    sudo systemctl restart kubelet
+    ```
+    
+8. Run again the `kuabadm init`
+    
+    The kubeadm should startup with the expected output.
+      ![image.png](assets/tb2.5.png)
+    
