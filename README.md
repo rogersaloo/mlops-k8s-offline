@@ -41,11 +41,11 @@ Docker is a platform for shipping and running containerized applications.
     
 4. Copy the downloaded `*.deb` files to the offline server and install them in the following order. 
     
-    ```bash
-     sudo apt install ./docker-ce_5_3a27.3.1-1~ubuntu.22.04~jammy_amd64.deb
-     sudo apt install ./docker-ce-cli_5_3a27.3.1-1~ubuntu.22.04~jammy_amd64.deb
-     sudo apt install ./docker-buildx-plugin_0.17.1-1~ubuntu.22.04~jammy_amd64.deb
-     sudo apt install ./docker-compose-plugin_2.29.7-1~ubuntu.22.04~jammy_amd64.deb
+    ```
+    sudo apt install ./docker-ce_5_3a27.3.1-1~ubuntu.22.04~jammy_amd64.deb
+    sudo apt install ./docker-ce-cli_5_3a27.3.1-1~ubuntu.22.04~jammy_amd64.deb
+    sudo apt install ./docker-buildx-plugin_0.17.1-1~ubuntu.22.04~jammy_amd64.deb
+    sudo apt install ./docker-compose-plugin_2.29.7-1~ubuntu.22.04~jammy_amd64.deb
     ```
     
 
@@ -154,7 +154,7 @@ First we need to generate ssl certificates that will be used to authenticate the
     openssl req -x509 -newkey rsa:4096 -days 365 -config openssl.conf -keyout certs/domain.key -out certs/domain.crt
     ```
     
-    ![image.png](attachment:94073cc2-e9f3-4d01-8a4a-cd476e0c76c7:image.png)
+    ![image.png](assets/4.1ss-cert.png)
     
 4. Verify the created certificates. A successful output will include the signature of the algorithm, the issuer, validity, rsa encryption etc. 
     
@@ -269,7 +269,7 @@ The  following error occurs on the untrusted certificates from the SSL to be abl
     sudo update-ca-certificates
     ```
     
-    ![image.png](attachment:e1f878f2-9452-4d01-a214-be6ea3af86ec:image.png)
+    ![image.png](assets/4.2-ca-cert.png)
     
 2. Configure containerd to trust the registry. Edit the containerd configuration file. Replace  `ca_file` with the actual path to your CA certificate.
     
@@ -593,7 +593,7 @@ Once you finish setting up hostnames on all the cluster nodes, switch to the mas
      # The expected output should be `systemd`
     ```
     
-    ![image.png](attachment:9f0b736d-6039-4349-84d6-ac7827bcc5c5:image.png)
+    ![image.png](assets/2.8-cgroup.png)
     
 2. Both the container runtime and the kubelet have a property called "cgroup driver", which is important for the management of cgroups on Linux machines. Open the **kubelet** file in a text editor.
     
@@ -641,7 +641,7 @@ Once you finish setting up hostnames on all the cluster nodes, switch to the mas
     
     Save the file and exit.
     
-    ![image.png](attachment:8db41a8b-b070-4c5e-9b0c-e7c6156ea295:9d8cc493-a155-421d-8d4c-d58c8d478239.png)
+    ![image.png](assets/2.9-kubeadm.png)
     
 2. Reload the configuration and restart the kubelet:
     
@@ -664,7 +664,7 @@ sudo kubeadm init --control-plane-endpoint=controlplane --pod-network-cidr="10.2
 
 You should see a similar output
 
-![image.png](attachment:e8e26fa4-8f03-480b-a4ac-93ad9bb3a7ff:image.png)
+![image.png](assets/2.10-kube-init.png)
 
 If the output has error refer to troubleshoot2 to check the possible solutions. 
 
@@ -692,7 +692,7 @@ K8s configurations need to be stored in directory on the master node. This conta
     
 4. Check that the nodes are initialized successfully. The nodes will indicate not ready since we have not yet set up a network.
     
-    ![image.png](attachment:3a3f1ad1-0fca-4850-8829-a402e5e4740e:image.png)
+    ![image.png](assets/2.11-init-net.png)
     
 
 ### (optional) Join worker nodes and redundant master node
@@ -777,7 +777,7 @@ A pod network is a way to allow communication between different nodes in the clu
         kubectl get pods -n kube-flannel
         ```
         
-        ![image.png](attachment:c0ad6ba8-1304-48aa-9ffa-c3733b34059e:image.png)
+        ![image.png](assets/2.12-flannel-a.png)
         
     - Additionally, all the pods in the `kube-system` namespace should be running.
         
@@ -785,7 +785,7 @@ A pod network is a way to allow communication between different nodes in the clu
         kubectl get pods -n kube-flannel
         ```
         
-        ![image.png](attachment:49860aed-c50f-4ea3-9112-aa666122af66:image.png)
+        ![image.png](assets/2.12-flannel-b.png)
         
     - And finally the status of the node will change from `NotReady` to `Ready`
         
@@ -793,7 +793,7 @@ A pod network is a way to allow communication between different nodes in the clu
         kubectl get nodes
         ```
         
-        ![image.png](attachment:4b4118d2-e0e2-4c6c-b23e-aafc7c67e5d0:image.png)
+        ![image.png](assets/2.12-flannel-c.png)
         
 
 ### (optional) Installation with weave net
@@ -853,6 +853,6 @@ In a case where you would like the master node to also run containers like a wor
 kubectl taint nodes aloo node-role.kubernetes.io/control-plane-
 ```
 
-![image.png](attachment:135e2bba-b75e-470c-a25c-fecbf86807a9:image.png)
+![image.png](assets/2.13-untaint.png)
 
-### Troubleshooting error
+## Troubleshooting 
