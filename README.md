@@ -251,7 +251,7 @@ sudo docker load -i  registry-2.tar
         docker push <ip address>:6000/registry:2
         ```
         
-        ![Screenshot 2025-05-08 at 13.01.45.png](attachment:1120f42c-5d99-4d81-84a8-572eeba28928:Screenshot_2025-05-08_at_13.01.45.png)
+        ![Screenshot 2025-05-08 at 13.01.45.png](assets/1.4-push-registry.png)
         
     3. Troubleshoot:  `tls: failed to verify certificate: x509: certificate signed by unknown authority`
         
@@ -812,13 +812,15 @@ In a similar manner pull save and copy the weave net images.
     
     List the images `docker image list` to see below
     
+    ```
     weaveworks/weave-npc                       latest      690c3345cc9c   3 years ago     39.3MB
     weaveworks/weave-kube                      latest      62fea85d6052   3 years ago     89MB
+    ```
     
 3. Export IP address
     
     ```
-     export IP_ADDRESS=10.100.9.36
+     export IP_ADDRESS=<ip-address>:6000 # change ip
     
     ```
     
