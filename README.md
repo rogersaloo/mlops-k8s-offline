@@ -989,7 +989,7 @@ The error occurs due to a timeout in initializing the kubeadm. This occcurs when
     Below the file server add. `nano /etc/hosts` 
     
     ```jsx
-    10.100.9.6 controlplane
+    <ip-address> controlplane
     ```
     
     The added IP should be the same as that of the fileserver. Save and exit. 
