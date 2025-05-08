@@ -1,20 +1,21 @@
 # mlops-k8s-offline
-# Offline Kubernetes for MLOPS
+The repo describes the installation of kubernates with kubeadm and set up a local cluster that is disrtibuted among multiple woker and control nodes.
 
-In normal situation deployments of AI models including LLMs are done in dockerized enviroments. However, with the need to scale and manage these resources we use kubernetes. Kubernetes in a container orchestration tool. 
-I have recently been working on OSS LLMs, custom trained LLMs and deployment of these LLMs and other AI models on premise due to the private nature of data. The deployments have been made at scale on use by multiple concurrent users and to enable GPU compute efficiency.  
-To be able to achieve this, i have deployed kubernetes (k8s) clusters totally offline. The servers( which are DGX stations H100 and H200) are not connected to the internet and are accessible on local offline environment. 
+In normal development situation deployments of AI models including LLMs are done in docker environments. However, with the need to scale and manage these resources we use Kubernetes which is a container orchestration tool. 
 
-I am aware that there are several materials setting up k8s cluster. But this series will focus on the offline setup of the cluster and running LLMs. 
+I have recently been working on deployments of OSS LLMs/VLMs, custom trained LLMs and inference frameworks at scale. In most of the use case the deployment of these AI models have been on premise due to the private nature of usage. To achieve this, I have deployed Kubernetes(k8s) clusters totally offline
+
+The deployments have been made at scale on use by multiple concurrent users and to enable GPU compute efficiency. The servers( which are normally DGX stations H100 and H200) are not connected to the internet and are accessible on local networks.
+
+I am aware that there are several materials setting up k8s cluster. But this series will focus on the offline setup of k8s cluster and running AI models ar scale. including LLMs/VLMs/Databases(vector dbs)/Diffusion models/OCR models/.
 
 ## Requirements
 
-This series is based of deployment on
-
-- ubuntu 22.04
-- k8s 1.30.6
-- cuda drivers
-- Assumption that there is nothing installed in the server.
+This articles assume deployment on enviroments with the following specifications.
+- Ubuntu 22.04
+- Kubernetes 1.30.6
+- Pre installed cuda drivers/cudnn. 
+- Docker has not been installed on the server.
 
 # Part1: Resources
 
